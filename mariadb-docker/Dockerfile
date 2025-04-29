@@ -5,4 +5,6 @@ ENV MARIADB_USER=user
 ENV MARIADB_PASSWORD=1234
 ENV MARIADB_ROOT_PASSWORD=1234
 
+EXPOSE 3306
+
 COPY docker-entrypoint-initdb.d/ /docker-entrypoint-initdb.d/

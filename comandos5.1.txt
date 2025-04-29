@@ -14,9 +14,9 @@ docker build -t spark-custom:3.3.2 .
 3. Iniciar el contenedor maestro de Spark:
 docker run -d --name spark-master-custom --network spark-network \
   -p 8080:8080 -p 7077:7077 \
-  -v "${PWD}:/opt/spark/data" \
+  -v "${PWD}/spark-docker:/opt/spark/data" \
   spark-custom:3.3.2 tail -f /dev/null
-# Levanta el contenedor spark-master-custom en segundo plano, exponiendo puertos y montando la carpeta local en /opt/spark/data.
+# Levanta el contenedor spark-master-custom en segundo plano, exponiendo puertos y montando la carpeta spark-docker en /opt/spark/data.
 
 4. Arrancar el servicio Spark Master:
 docker exec -d spark-master-custom bash -c "/opt/spark/bin/spark-class \
@@ -26,37 +26,37 @@ docker exec -d spark-master-custom bash -c "/opt/spark/bin/spark-class \
 
 5. Ejecutar el script Euclid y filtrar resultados:
 docker exec spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  --master local[*] data/euclid.py 2>&1 | grep '^gcd'"
+  --master local[*] /opt/spark/data/euclid.py 2>&1 | grep '^gcd'"
 # Envía el job Euclid a Spark en modo local y muestra solo las líneas que empiezan con 'gcd'.
 
 6. Calcular la nota media de todas las votaciones:
 docker exec spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  --master local[*] data/movies_each_average.py 2>/dev/null"
+  --master local[*] /opt/spark/data/movies_each_average.py 2>/dev/null"
 # Ejecuta el script movies_each_average.py y suprime los logs de Spark para salida limpia.
 
 7. Filtrar películas con nota media > 3:
 docker exec spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  --master local[*] data/average_movie_mark.py 2>/dev/null"
+  --master local[*] /opt/spark/data/average_movie_mark.py 2>/dev/null"
 # Ejecuta average_movie_mark.py y muestra solo las películas cuyo promedio supera 3.0.
 
 8. MapReduce usando DataFrames de Spark:
 docker exec spark-master-custom bash -c '/opt/spark/bin/spark-submit \
-  --master local[*] data/mapreduce.py'
+  --master local[*] /opt/spark/data/mapreduce.py'
 # Ejecuta el ejercicio de MapReduce implementado con DataFrames.
 
 9. RDD sobre películas (4+ vocales):
 docker exec spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  --master local[*] data/movies_rdd.py"
+  --master local[*] /opt/spark/data/movies_rdd.py"
 # Crea un RDD desde CSV y filtra títulos con al menos 4 vocales.
 
 10. Listado de todas las palabras de El Quijote:
 docker exec spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  --master local[*] data/quijote_all_words_list.py"
+  --master local[*] /opt/spark/data/quijote_all_words_list.py"
 # Genera una lista completa de palabras a partir del texto.
 
 11. Conteo de una palabra específica (ejemplo 'dichoso'):
 docker exec spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  --master local[*] data/quijote_word_count.py dichoso"
+  --master local[*] /opt/spark/data/quijote_word_count.py dichoso"
 # Cuenta cuántas veces aparece la palabra indicada en el texto.
 
 12. Construir la imagen Docker de Hadoop:
@@ -95,7 +95,7 @@ exit
 
 19. Guardar recuento de palabras en HDFS:
 docker exec spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  data/quijote_wordcount_to_hdfs.py"
+  /opt/spark/data/quijote_wordcount_to_hdfs.py"
 # Ejecuta el script que guarda el conteo completo de palabras en HDFS.
 
 20. Listar archivos de conteo en HDFS:
@@ -108,20 +108,20 @@ docker exec -it hadoop-namenode bash -c "hdfs dfs -cat /quijote_wordcount/part-*
 
 22. Ejercicio 'numbers_task':
 docker exec -it spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  data/numbers_task.py"
+  /opt/spark/data/numbers_task.py"
 # Devuelve una muestra, orden descendente y extrae el mayor y los dos menores.
 
 23. Ejercicio 'words_rdd_tasks':
 docker exec -it spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  data/words_rdd_tasks.py"
+  /opt/spark/data/words_rdd_tasks.py"
 # Agrupa palabras traducidas, identifica iguales, distintas y agrupa por vocal/consonante.
 
 24. Ejercicio 'names_rdd_tasks':
 docker exec -it spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  data/names_rdd_tasks.py"
+  /opt/spark/data/names_rdd_tasks.py"
 # Agrupa nombres por inicial, obtiene muestras aleatorias fijas y con repetición.
 
 25. Ejercicio 'marks_rdd_tasks':
 docker exec -it spark-master-custom bash -c "/opt/spark/bin/spark-submit \
-  data/marks_rdd_tasks.py"
+  /opt/spark/data/marks_rdd_tasks.py"
 # Procesa ficheros de notas para RDD: min, media, suspensos, no presentados, etc.

@@ -22,7 +22,7 @@ CREATE TABLE users (
   nickname          VARCHAR(50) PRIMARY KEY,
   password          VARCHAR(255) NOT NULL CHECK (CHAR_LENGTH(password) >= 8),
   email             VARCHAR(100) NOT NULL UNIQUE,
-  registration_date DATE        NOT NULL DEFAULT CURRENT_DATE
+  registration_date DATE        NOT NULL DEFAULT DATE
 );
 
 CREATE TABLE profiles (
@@ -41,6 +41,21 @@ CREATE TABLE profiles (
 CREATE TABLE contract_types (
   code        VARCHAR(20) PRIMARY KEY,
   description VARCHAR(100)
+);
+
+CREATE TABLE contracts (
+  user_nickname VARCHAR(50),
+  dni VARCHAR(20),
+  contract_type VARCHAR(20),
+  address VARCHAR(100),
+  city VARCHAR(50),
+  postal_code VARCHAR(20),
+  country VARCHAR(50),
+  start_date DATE,
+  end_date DATE,
+  PRIMARY KEY (user_nickname, contract_type),
+  FOREIGN KEY (user_nickname) REFERENCES users(nickname) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (contract_type) REFERENCES contract_types(code) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ... demás tablas idénticas ...
