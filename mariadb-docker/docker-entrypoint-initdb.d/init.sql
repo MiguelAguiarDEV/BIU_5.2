@@ -22,7 +22,7 @@ CREATE TABLE users (
   nickname          VARCHAR(50) PRIMARY KEY,
   password          VARCHAR(255) NOT NULL CHECK (CHAR_LENGTH(password) >= 8),
   email             VARCHAR(100) NOT NULL UNIQUE,
-  registration_date DATE        NOT NULL DEFAULT DATE
+  registration_date DATE        NOT NULL DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE profiles (
@@ -72,36 +72,36 @@ INSERT INTO contract_types(code, description) VALUES
 
 -- 3.2 users (30 nicknames realistas)
 INSERT INTO users(nickname, password, email, registration_date) VALUES
-  ('cinephile89','Passw0rd!','cinephile89@example.com','2025/01/10'),
-  ('filmBuff','Secr3tPwd','filmbuff@example.com','2025/01/12'),
-  ('popcornLover','M1pl4n4pwd','popcornlover@example.com','2025/01/15'),
-  ('reelWatcher','C0ntr@seña','reelwatcher@example.com','2025/02/01'),
-  ('movieManiac','MiPass123','moviemaniac@example.com','2025/02/10'),
-  ('flickFanatic','P4labr3Seg','flickfanatic@example.com','2025/02/20'),
-  ('screenQueen','L0gr@Pass','screenqueen@example.com','2025/03/05'),
-  ('blockbusterBob','Adm1n1234','blockbusterbob@example.com','2025/03/15'),
-  ('indieSeeker','Pelicula!','indieseeker@example.com','2025/03/20'),
-  ('trailerJunkie','Contraseña1','trailerjunkie@example.com','2025/03/25'),
-  ('filmCritic','Acceso2025','filmcritic@example.com','2025/04/01'),
-  ('silverScreen','RedMovie!','silverscreen@example.com','2025/04/05'),
-  ('cinemaLover','Bind2025!','cinemalover@example.com','2025/04/10'),
-  ('bingeWatcher','Digital99','bingewatcher@example.com','2025/04/12'),
-  ('midnightViewer','Cont3nidos','midnightviewer@example.com','2025/04/15'),
-  ('tvAddict','MyMovie!1','tvaddict@example.com','2025/04/18'),
-  ('streamingPro','L4nch1p0p','streamingpro@example.com','2025/04/20'),
-  ('filmGeek','StreamMe2','filmgeek@example.com','2025/04/22'),
-  ('movieGuru','CineFan123','movieguru@example.com','2025/04/24'),
-  ('sagaHunter','FilmBuff!','sagahunter@example.com','2025/04/26'),
-  ('sagaChaser','MovieL0ver','sagachaser@example.com','2025/04/28'),
-  ('reelMaster','WatchMore','reelmaster@example.com','2025/04/29'),
-  ('cineAddict','SerialCine','cineaddict@example.com','2025/04/29'),
-  ('theatreBuff','BindFan24','theatrebuff@example.com','2025/04/29'),
-  ('directorDreamer','ViewAll25','directordreamer@example.com','2025/04/29'),
-  ('actorWatcher','Cinephile26','actorwatcher@example.com','2025/04/29'),
-  ('scriptReader','FilmAddict','scriptreader@example.com','2025/04/29'),
-  ('plotTwister','ScreenLove','plottwister@example.com','2025/04/29'),
-  ('pictureFan','MovieTime','picturefan@example.com','2025/04/29'),
-  ('sceneStealer','PlayReel!','scenestealer@example.com','2025/04/29');
+  ('cinephile89','Passw0rd!','cinephile89@example.com','2025-01-10'),
+  ('filmBuff','Secr3tPwd','filmbuff@example.com','2025-01-12'),
+  ('popcornLover','M1pl4n4pwd','popcornlover@example.com','2025-01-15'),
+  ('reelWatcher','C0ntr@seña','reelwatcher@example.com','2025-02-01'),
+  ('movieManiac','MiPass123','moviemaniac@example.com','2025-02-10'),
+  ('flickFanatic','P4labr3Seg','flickfanatic@example.com','2025-02-20'),
+  ('screenQueen','L0gr@Pass','screenqueen@example.com','2025-03-05'),
+  ('blockbusterBob','Adm1n1234','blockbusterbob@example.com','2025-03-15'),
+  ('indieSeeker','Pelicula!','indieseeker@example.com','2025-03-20'),
+  ('trailerJunkie','Contraseña1','trailerjunkie@example.com','2025-03-25'),
+  ('filmCritic','Acceso2025','filmcritic@example.com','2025-04-01'),
+  ('silverScreen','RedMovie!','silverscreen@example.com','2025-04-05'),
+  ('cinemaLover','Bind2025!','cinemalover@example.com','2025-04-10'),
+  ('bingeWatcher','Digital99','bingewatcher@example.com','2025-04-12'),
+  ('midnightViewer','Cont3nidos','midnightviewer@example.com','2025-04-15'),
+  ('tvAddict','MyMovie!1','tvaddict@example.com','2025-04-18'),
+  ('streamingPro','L4nch1p0p','streamingpro@example.com','2025-04-20'),
+  ('filmGeek','StreamMe2','filmgeek@example.com','2025-04-22'),
+  ('movieGuru','CineFan123','movieguru@example.com','2025-04-24'),
+  ('sagaHunter','FilmBuff!','sagahunter@example.com','2025-04-26'),
+  ('sagaChaser','MovieL0ver','sagachaser@example.com','2025-04-28'),
+  ('reelMaster','WatchMore','reelmaster@example.com','2025-04-29'),
+  ('cineAddict','SerialCine','cineaddict@example.com','2025-04-29'),
+  ('theatreBuff','BindFan24','theatrebuff@example.com','2025-04-29'),
+  ('directorDreamer','ViewAll25','directordreamer@example.com','2025-04-29'),
+  ('actorWatcher','Cinephile26','actorwatcher@example.com','2025-04-29'),
+  ('scriptReader','FilmAddict','scriptreader@example.com','2025-04-29'),
+  ('plotTwister','ScreenLove','plottwister@example.com','2025-04-29'),
+  ('pictureFan','MovieTime','picturefan@example.com','2025-04-29'),
+  ('sceneStealer','PlayReel!','scenestealer@example.com','2025-04-29');
 
 -- 3.3 profiles (mismos datos reales, actualizando sólo el nickname)
 INSERT INTO profiles(user_nickname, dni, first_name, last_name, age, mobile_number, birth_date) VALUES
