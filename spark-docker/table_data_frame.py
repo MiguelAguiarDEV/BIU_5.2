@@ -1,54 +1,31 @@
-import mariadb
-import sys
-from pyspark.sql import SparkSession, Row
-from datetime import date
+from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("ReadMariaDB_NonSparkConnector").getOrCreate()
-sc = spark.sparkContext
-sc.setLogLevel("ERROR")
+# Inicializa la SparkSession
+spark = SparkSession.builder.appName("Read MySQL Tables with Spark").getOrCreate()
 
-# Database connection details
-db_host = "mariadb-moviebind"
-db_port = 3306
-db_name = "moviebind"
-db_user = "user"
-db_password = "1234"
+# Parámetros de conexión JDBC
+jdbc_url = "jdbc:mysql://mariadb-moviebind:3306/moviebind"
+props = {"user": "user", "password": "1234", "driver": "com.mysql.cj.jdbc.Driver"}
 
-try:
-    # Connect to MariaDB
-    conn = mariadb.connect(
-        user=db_user,
-        password=db_password,
-        host=db_host,
-        port=db_port,
-        database=db_name
-    )
-except mariadb.Error as e:
-    print(f"Error connecting to MariaDB Platform: {e}")
-    sys.exit(1)
+# Error level info
+spark.sparkContext.setLogLevel("ERROR")
+# Lista fija de tablas según tu init.sql
+tables = [
+    "users",
+    "profiles",
+    "contract_types",
+    "contracts",
+    "movies",
+    "actors",
+    "movie_actors",
+    "genres",
+    "movie_genres",
+    "keywords",
+    "movie_keywords"
+]
 
-# Get cursor
-cur = conn.cursor(dictionary=True) # Fetch as dictionaries
+for t in tables:
+    df = spark.read.jdbc(url=jdbc_url, table=t, properties=props)
+    df.show(truncate=False)
 
-# Get all table names from the database
-cur.execute("SHOW TABLES")
-table_names = [row[f'Tables_in_{db_name}'] for row in cur.fetchall()]
-
-dataframes = {}
-
-for table in table_names:
-    cur.execute(f"SELECT * FROM {table}")
-    results = cur.fetchall()
-    rows = [Row(**row) for row in results]
-    df = spark.createDataFrame(rows)
-    dataframes[table] = df
-    print(f"Tabla: {table}")
-    df.printSchema()
-    print(f"Número de filas: {df.count()}")
-    try:
-        df.show(truncate=False)
-    except Exception as e:
-        print(f"Error during show() for table {table}: {e}")
-
-# Close connection
-conn.close()
+spark.stop()
