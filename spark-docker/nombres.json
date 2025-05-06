@@ -1,0 +1,8 @@
+[
+  {"Nombre": "Juan", "Edad": 34, "Mayor30": true, "Ciudad": "Madrid"},
+  {"Nombre": "Ana", "Edad": 28, "Mayor30": false, "Ciudad": "Sevilla"},
+  {"Nombre": "Luis", "Edad": 45, "Mayor30": true, "Ciudad": "Valencia"},
+  {"Nombre": "Laura", "Edad": 32, "Mayor30": true, "Ciudad": "Bilbao"},
+  {"Nombre": "Carlos", "Edad": 60, "Mayor30": true, "Ciudad": "Zaragoza"},
+  {"Nombre": "María", "Edad": 25, "Mayor30": false, "Ciudad": "Granada"}
+]

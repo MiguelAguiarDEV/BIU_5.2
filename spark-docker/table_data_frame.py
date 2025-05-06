@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 spark = SparkSession.builder.appName("Read MySQL Tables with Spark").getOrCreate()
 
 # Parámetros de conexión JDBC
-jdbc_url = "jdbc:mysql://mariadb-moviebind:3306/moviebind"
+jdbc_url = "jdbc:mysql://mysql-moviebind:3306/moviebind"
 props = {"user": "user", "password": "1234", "driver": "com.mysql.cj.jdbc.Driver"}
 
 # Error level info
@@ -26,6 +26,6 @@ tables = [
 
 for t in tables:
     df = spark.read.jdbc(url=jdbc_url, table=t, properties=props)
-    df.show(truncate=False)
+    df.show()
 
 spark.stop()

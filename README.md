@@ -1,6 +1,6 @@
-# Práctica 5.2: Spark, MariaDB y Hadoop
+# Práctica 5.2: Spark, MySQL y Hadoop
 
-En esta práctica se integran Spark, MariaDB y Hadoop usando Docker. A continuación se detallan los comandos y pasos para cada apartado, siguiendo el mismo estilo que la práctica anterior.
+En esta práctica se integran Spark, MySQL y Hadoop usando Docker. A continuación se detallan los comandos y pasos para cada apartado, siguiendo el mismo estilo que la práctica anterior.
 
 ---
 
@@ -8,7 +8,7 @@ En esta práctica se integran Spark, MariaDB y Hadoop usando Docker. A continuac
 
 ### 1.1. Eliminar contenedores y red anteriores (opcional)
 ```sh
-docker rm -f spark-master-custom hadoop-namenode mariadb-moviebind || true
+docker rm -f spark-master-custom hadoop-namenode mysql-moviebind || true
 docker network rm spark-network || true
 ```
 _Elimina contenedores y red si existen, para evitar conflictos._
@@ -23,13 +23,13 @@ _Crea la red para que los contenedores se comuniquen._
 ```sh
 docker build -t spark-custom:3.3.2 ./spark-docker
 docker build -t hadoop-custom:3.3.2 ./hadoop-docker
-docker build -t my-mariadb ./mariadb-docker
+docker build -t my-mysql ./mysql-docker
 ```
-_Compila las imágenes de Spark, Hadoop y MariaDB._
+_Compila las imágenes de Spark, Hadoop y MySQL._
 
 ### 1.4. Iniciar los contenedores
 ```sh
-docker run -d --name mariadb-moviebind --network spark-network -p 3306:3306 my-mariadb
+docker run -d --name mysql-moviebind --network spark-network -p 3306:3306 my-mysql
 docker run -d --name spark-master-custom --network spark-network -p 8080:8080 -p 7077:7077 -v "$(pwd)/spark-docker:/opt/spark/data" spark-custom:3.3.2 tail -f /dev/null
 docker run -d --name hadoop-namenode --network spark-network hadoop-custom:3.3.2 tail -f /dev/null
 ```
@@ -63,8 +63,8 @@ _Esto permite usar el comando ping dentro del contenedor._
 
 ### 1.8. Ver logs de los contenedores
 ```sh
-docker logs mariadb-moviebind
-# Ver logs de MariaDB
+docker logs mysql-moviebind
+# Ver logs de MySQL
 
 docker logs spark-master-custom
 # Ver logs de Spark
@@ -76,7 +76,7 @@ _Útil para depuración y ver errores de arranque._
 
 ---
 
-## 2. Crear un DataFrame con todas las tablas y sus datos de MariaDB
+## 2. Crear un DataFrame con todas las tablas y sus datos de MySQL
 
 ### 2.1. Acceder al contenedor de Spark
 ```sh
@@ -84,19 +84,19 @@ docker exec -it spark-master-custom bash
 ```
 _Entra en el contenedor para ejecutar scripts de Spark._
 
-### 2.2. Crear el script para leer las tablas de MariaDB
+### 2.2. Crear el script para leer las tablas de MySQL
 Crea el archivo `read_all_tables.py` en la carpeta `spark-docker` (se verá en `/opt/spark/data` dentro del contenedor):
 
 ```python
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("ReadMariaDB").getOrCreate()
+spark = SparkSession.builder.appName("ReadMySQL").getOrCreate()
 
-url = "jdbc:mariadb://mariadb-moviebind:3306/moviebind"
+url = "jdbc:mysql://mysql-moviebind:3306/moviebind"
 properties = {
     "user": "user",
     "password": "1234",
-    "driver": "org.mariadb.jdbc.Driver"
+    "driver": "com.mysql.cj.jdbc.Driver"
 }
 
 tables = [
