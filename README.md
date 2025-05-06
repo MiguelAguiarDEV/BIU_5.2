@@ -128,6 +128,52 @@ _Ejecuta el script y verás los datos de cada tabla en la salida._
 
 ---
 
-# (Añade aquí los siguientes apartados de la práctica 5.2 siguiendo este mismo formato)
+## 3. Ejecución de scripts de Spark y tareas de la práctica
+
+A continuación se explica cómo ejecutar cada uno de los scripts principales de la carpeta `spark-docker` para resolver las tareas de la práctica. Todos los comandos deben ejecutarse dentro del contenedor de Spark:
+
+```sh
+docker exec -it spark-master-custom bash
+cd /opt/spark/data
+```
+
+### 3.1. Consultas SQL sobre MySQL con Spark
+Ejecuta las consultas SQL sobre las tablas de MySQL usando Spark SQL:
+```sh
+spark-submit /opt/spark/data/sql_queries.py
+```
+_Este script realiza consultas SQL sobre las tablas importadas desde MySQL y muestra los resultados por pantalla._
+
+### 3.2. Consultas nativas con PySpark
+Ejecuta las consultas usando solo PySpark (sin SQL):
+```sh
+spark-submit /opt/spark/data/native_queries.py
+```
+_Este script resuelve las tareas usando solo funciones nativas de PySpark._
+
+### 3.3. Ejercicio de nombres (nombres.json)
+Procesa el fichero `nombres.json` y realiza las transformaciones pedidas:
+```sh
+spark-submit /opt/spark/data/names.py
+```
+_Este script lee el archivo JSON de nombres y aplica transformaciones sobre los datos._
+
+### 3.4. Ejercicio de ventas con nulos (VentasNulos.csv)
+Procesa el fichero de ventas con nulos y aplica las transformaciones:
+```sh
+spark-submit /opt/spark/data/sales.py
+```
+_Este script limpia y transforma los datos de ventas, gestionando los valores nulos según lo solicitado en la práctica._
+
+### 3.5. Mostrar todas las tablas de MySQL como DataFrame
+Muestra el contenido de todas las tablas de MySQL como DataFrame:
+```sh
+spark-submit /opt/spark/data/table_data_frame.py
+```
+_Este script conecta a MySQL y muestra los datos de todas las tablas principales._
+
+---
+
+Puedes añadir más scripts siguiendo este mismo formato. Si algún script requiere argumentos, indícalo en la línea de ejecución correspondiente.
 
 
