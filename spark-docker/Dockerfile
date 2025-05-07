@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install -y \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
+RUN pip install pandas
+RUN pip install matplotlib
 
 # Copiar el conector JDBC
 COPY mysql-connector-j-8.0.33.jar /opt/spark/jars/
