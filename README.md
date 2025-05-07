@@ -1,10 +1,10 @@
-# Práctica 5.2: Spark, MySQL y Hadoop
+# Práctica 5.2: Análisis de Ventas y Consultas con Spark, MySQL y Hadoop
 
-En esta práctica se integran Spark, MySQL y Hadoop usando Docker. A continuación se detallan los comandos y pasos para cada apartado, siguiendo el mismo estilo que la práctica anterior.
+Esta práctica integra Spark, MySQL y Hadoop usando Docker. Aquí tienes los pasos y comandos para cada apartado, adaptados a los ejercicios y scripts de esta práctica. Cada sección incluye una breve explicación y cómo ver los resultados.
 
 ---
 
-## 1. Preparación del entorno
+## 1. Preparación del entorno Docker
 
 ### 1.1. Eliminar contenedores y red anteriores (opcional)
 ```sh
@@ -33,7 +33,7 @@ docker run -d --name mysql-moviebind --network spark-network -p 3306:3306 my-mys
 docker run -d --name spark-master-custom --network spark-network -p 8080:8080 -p 7077:7077 -v "$(pwd)/spark-docker:/opt/spark/data" spark-custom:3.3.2 tail -f /dev/null
 docker run -d --name hadoop-namenode --network spark-network hadoop-custom:3.3.2 tail -f /dev/null
 ```
-_Lanza los contenedores en la red spark-network y monta la carpeta spark-docker en /opt/spark/data del contenedor de Spark._
+_Lanza los contenedores y monta la carpeta de trabajo en Spark._
 
 ### 1.5. (Solo la primera vez) Formatear el NameNode de Hadoop
 ```sh
@@ -41,7 +41,7 @@ docker exec -it hadoop-namenode bash -c "/opt/hadoop/bin/hdfs namenode -format"
 ```
 _Inicializa el sistema de archivos HDFS._
 
-### 1.6. Acceder al contenedor Hadoop e iniciar servicios HDFS
+### 1.6. Iniciar servicios HDFS en Hadoop
 ```sh
 docker exec -it hadoop-namenode bash
 # Dentro del contenedor ejecuta:
@@ -55,124 +55,92 @@ exit
 ```
 _Inicia los servicios de HDFS._
 
-### 1.7. Instalar ping (iputils-ping) en un contenedor (por ejemplo, Spark)
+### 1.7. Instalar ping (opcional, para pruebas de red)
 ```sh
 docker exec -it spark-master-custom bash -c "apt-get update && apt-get install -y iputils-ping"
 ```
-_Esto permite usar el comando ping dentro del contenedor._
-
-### 1.8. Ver logs de los contenedores
-```sh
-docker logs mysql-moviebind
-# Ver logs de MySQL
-
-docker logs spark-master-custom
-# Ver logs de Spark
-
-docker logs hadoop-namenode
-# Ver logs de Hadoop
-```
-_Útil para depuración y ver errores de arranque._
+_Permite usar ping dentro del contenedor._
 
 ---
 
-## 2. Crear un DataFrame con todas las tablas y sus datos de MySQL
+## 2. Ejecución de scripts
 
-### 2.1. Acceder al contenedor de Spark
-```sh
-docker exec -it spark-master-custom bash
-```
-_Entra en el contenedor para ejecutar scripts de Spark._
-
-### 2.2. Crear el script para leer las tablas de MySQL
-Crea el archivo `read_all_tables.py` en la carpeta `spark-docker` (se verá en `/opt/spark/data` dentro del contenedor):
-
-```python
-from pyspark.sql import SparkSession
-
-spark = SparkSession.builder.appName("ReadMySQL").getOrCreate()
-
-url = "jdbc:mysql://mysql-moviebind:3306/moviebind"
-properties = {
-    "user": "user",
-    "password": "1234",
-    "driver": "com.mysql.cj.jdbc.Driver"
-}
-
-tables = [
-    "users",
-    "profiles",
-    "contract_types",
-    "contracts",
-    "movies",
-    "actors",
-    "movie_actors",
-    "genres",
-    "movie_genres",
-    "keywords",
-    "movie_keywords"
-]
-
-dataframes = {}
-for table in tables:
-    df = spark.read.jdbc(url=url, table=table, properties=properties)
-    dataframes[table] = df
-    df.show()
-```
-
-### 2.3. Ejecutar el script en Spark
-```sh
-spark-submit /opt/spark/data/read_all_tables.py
-```
-_Ejecuta el script y verás los datos de cada tabla en la salida._
-
----
-
-## 3. Ejecución de scripts de Spark y tareas de la práctica
-
-A continuación se explica cómo ejecutar cada uno de los scripts principales de la carpeta `spark-docker` para resolver las tareas de la práctica. Todos los comandos deben ejecutarse dentro del contenedor de Spark:
-
-```sh
-docker exec -it spark-master-custom bash
-cd /opt/spark/data
-```
-
-### 3.1. Consultas SQL sobre MySQL con Spark
-Ejecuta las consultas SQL sobre las tablas de MySQL usando Spark SQL:
-```sh
-spark-submit /opt/spark/data/sql_queries.py
-```
-_Este script realiza consultas SQL sobre las tablas importadas desde MySQL y muestra los resultados por pantalla._
-
-### 3.2. Consultas nativas con PySpark
-Ejecuta las consultas usando solo PySpark (sin SQL):
-```sh
-spark-submit /opt/spark/data/native_queries.py
-```
-_Este script resuelve las tareas usando solo funciones nativas de PySpark._
-
-### 3.3. Ejercicio de nombres (nombres.json)
-Procesa el fichero `nombres.json` y realiza las transformaciones pedidas:
-```sh
-spark-submit /opt/spark/data/names.py
-```
-_Este script lee el archivo JSON de nombres y aplica transformaciones sobre los datos._
-
-### 3.4. Ejercicio de ventas con nulos (VentasNulos.csv)
-Procesa el fichero de ventas con nulos y aplica las transformaciones:
-```sh
-spark-submit /opt/spark/data/sales.py
-```
-_Este script limpia y transforma los datos de ventas, gestionando los valores nulos según lo solicitado en la práctica._
-
-### 3.5. Mostrar todas las tablas de MySQL como DataFrame
-Muestra el contenido de todas las tablas de MySQL como DataFrame:
+### 2.1. Mostrar todas las tablas de MySQL como DataFrame
 ```sh
 spark-submit /opt/spark/data/table_data_frame.py
 ```
-_Este script conecta a MySQL y muestra los datos de todas las tablas principales._
+_Conecta a MySQL y muestra los datos de todas las tablas principales como DataFrame por consola._
+
+### 2.2. Consultas nativas con PySpark
+```sh
+spark-submit /opt/spark/data/native_queries.py
+```
+_Resuelve las tareas usando solo funciones nativas de PySpark. Los resultados se muestran por consola._
+
+### 2.3. Consultas SQL sobre MySQL con Spark
+```sh
+spark-submit /opt/spark/data/sql_queries.py
+```
+_Realiza consultas SQL sobre las tablas importadas desde MySQL y muestra los resultados por pantalla._
+
+### 2.4. Ejercicio de nombres (nombres.json)
+```sh
+spark-submit /opt/spark/data/names.py
+```
+_Lee el archivo JSON de nombres y aplica las transformaciones pedidas. Los resultados se muestran por consola._
+
+### 2.5. Ejercicio de ventas con nulos (VentasNulos.csv)
+```sh
+spark-submit /opt/spark/data/sales.py
+```
+_Limpia y transforma los datos de ventas, gestionando los valores nulos según lo solicitado. Los resultados se muestran por consola._
+
+### 2.6. Utilizar UDF en Spark y Spark SQL
+```sh
+spark-submit /opt/spark/data/user_defined_function.py
+```
+_Ejecuta ejemplos de funciones definidas por el usuario (UDF) en Spark y Spark SQL. Los resultados se muestran por consola._
+
+### 2.7. Visualización de datos estadísticos con pandas
+```sh
+spark-submit /opt/spark/data/pandas_script.py
+```
+_Utiliza pandas para realizar análisis estadísticos y generar visualizaciones. Los gráficos se guardan como archivos PNG en `data/viz/` y los resultados se muestran por consola._
+
+### 2.8. Análisis de películas (movies.py)
+```sh
+spark-submit /opt/spark/data/movies.py
+```
+_Analiza datos de películas y calificaciones. Los resultados se muestran por consola._
+
+### 2.9. Análisis de ventas de tienda de tecnología (tech_sales.py)
+```sh
+spark-submit /opt/spark/data/tech_sales.py
+```
+_Analiza datos de ventas de una tienda de tecnología. Los resultados se muestran por consola._
+
+### 2.10. Carga y extracción de información con Spark SQL sobre ventas (load_and_extraction_sql.py)
+```sh
+spark-submit /opt/spark/data/load_and_extraction_sql.py
+```
+_Procesa todos los archivos de ventas en `salesdata/`, limpia y transforma los datos, guarda los resultados en formato Parquet en `salesoutput/` y genera gráficos en la carpeta de trabajo. Los resultados y gráficos se muestran por consola y se guardan como archivos PNG._
+
+- **Resultados:**
+  - Gráficos generados: `ventas_por_mes.png`, `top_ciudades.png`, `pedidos_por_hora.png` (en la carpeta donde ejecutas el script, típicamente `/opt/spark/data/` dentro del contenedor)
+  - Estructura de particiones Parquet en `salesoutput/`
+  - Listados y tablas por consola (estados, productos comprados juntos, etc.)
 
 ---
+
+## 3. Visualización de resultados
+
+- Los gráficos generados por los scripts de ventas se guardan en la carpeta de trabajo (`ventas_por_mes.png`, `top_ciudades.png`, `pedidos_por_hora.png`, etc.).
+- Los resultados de las consultas y transformaciones se muestran por consola al ejecutar cada script.
+- Los archivos Parquet generados se encuentran en la carpeta `salesoutput/` y pueden ser consultados con Spark si se desea.
+
+---
+
+**Nota:** Todos los scripts deben ejecutarse dentro del contenedor de Spark (`spark-master-custom`) en la ruta `/opt/spark/data`.
 
 Puedes añadir más scripts siguiendo este mismo formato. Si algún script requiere argumentos, indícalo en la línea de ejecución correspondiente.
 

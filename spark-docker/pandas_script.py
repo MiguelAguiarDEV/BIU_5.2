@@ -1,4 +1,3 @@
-\
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
@@ -35,6 +34,13 @@ frame['Sales'] = frame['Quantity Ordered'] * frame['Price Each']
 frame['Order Date'] = pd.to_datetime(frame['Order Date'], format='%m/%d/%y %H:%M')
 frame['Month'] = frame['Order Date'].dt.month_name()
 
+# Translate month names to Spanish
+month_translation = {
+    'January': 'Enero', 'February': 'Febrero', 'March': 'Marzo', 'April': 'Abril',
+    'May': 'Mayo', 'June': 'Junio', 'July': 'Julio', 'August': 'Agosto',
+    'September': 'Septiembre', 'October': 'Octubre', 'November': 'Noviembre', 'December': 'Diciembre'
+}
+frame['Month'] = frame['Month'].map(month_translation)
 
 # --- Descriptive Statistics ---
 print("--- Descriptive Statistics for Sales ---")
@@ -59,23 +65,26 @@ if not os.path.exists(viz_dir):
 
 # 1. Histogram of Sales
 plt.figure(figsize=(10, 6))
-frame['Sales'].plot(kind='hist', bins=50, title='Distribution of Sales Amount')
-plt.xlabel('Sales Amount')
-plt.ylabel('Frequency')
+frame['Sales'].plot(kind='hist', bins=50, title='Distribución del Monto de Ventas')
+plt.xlabel('Monto de Ventas')
+plt.ylabel('Frecuencia')
+plt.ticklabel_format(style='plain', axis='x') # Disable scientific notation on x-axis
 plt.savefig(os.path.join(viz_dir, 'sales_distribution_histogram.png'))
 plt.close()
 print(f"Histogram of sales distribution saved to {os.path.join(viz_dir, 'sales_distribution_histogram.png')}")
 
 # 2. Bar chart of Total Sales per Month
 plt.figure(figsize=(12, 7))
-sales_by_month_plot = frame.groupby('Month')['Sales'].sum().reindex(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'])
-sales_by_month_plot.plot(kind='bar', title='Total Sales per Month')
-plt.xlabel('Month')
-plt.ylabel('Total Sales ($)')
+# Define Spanish month order for plotting
+spanish_months_ordered = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+sales_by_month_plot = frame.groupby('Month')['Sales'].sum().reindex(spanish_months_ordered)
+sales_by_month_plot.plot(kind='bar', title='Ventas Totales por Mes')
+plt.xlabel('Mes')
+plt.ylabel('Ventas Totales ($)')
 plt.xticks(rotation=45)
+plt.ticklabel_format(style='plain', axis='y') # Disable scientific notation on y-axis
 plt.tight_layout()
 plt.savefig(os.path.join(viz_dir, 'total_sales_per_month.png'))
 plt.close()
-print(f"Bar chart of total sales per month saved to {os.path.join(viz_dir, 'total_sales_per_month.png')}")
 
 print("\\n--- Pandas script execution finished ---")
