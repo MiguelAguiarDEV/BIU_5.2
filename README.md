@@ -1,5 +1,8 @@
 # Práctica 5.2: Análisis de Ventas y Consultas con Spark, MySQL y Hadoop
 
+[Repositorio en GitHub](https://github.com/MiguelAguiarDEV/BIU_5.2)
+
+
 Esta práctica integra Spark, MySQL y Hadoop usando Docker. Aquí tienes los pasos y comandos para cada apartado, adaptados a los ejercicios y scripts de esta práctica. Cada sección incluye una breve explicación y cómo ver los resultados.
 
 ---
@@ -67,61 +70,61 @@ _Permite usar ping dentro del contenedor._
 
 ### 2.1. Mostrar todas las tablas de MySQL como DataFrame
 ```sh
-spark-submit /opt/spark/data/table_data_frame.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/table_data_frame.py
 ```
 _Conecta a MySQL y muestra los datos de todas las tablas principales como DataFrame por consola._
 
 ### 2.2. Consultas nativas con PySpark
 ```sh
-spark-submit /opt/spark/data/native_queries.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/native_queries.py
 ```
 _Resuelve las tareas usando solo funciones nativas de PySpark. Los resultados se muestran por consola._
 
 ### 2.3. Consultas SQL sobre MySQL con Spark
 ```sh
-spark-submit /opt/spark/data/sql_queries.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/sql_queries.py
 ```
 _Realiza consultas SQL sobre las tablas importadas desde MySQL y muestra los resultados por pantalla._
 
 ### 2.4. Ejercicio de nombres (nombres.json)
 ```sh
-spark-submit /opt/spark/data/names.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/names.py
 ```
 _Lee el archivo JSON de nombres y aplica las transformaciones pedidas. Los resultados se muestran por consola._
 
 ### 2.5. Ejercicio de ventas con nulos (VentasNulos.csv)
 ```sh
-spark-submit /opt/spark/data/sales.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/sales.py
 ```
 _Limpia y transforma los datos de ventas, gestionando los valores nulos según lo solicitado. Los resultados se muestran por consola._
 
 ### 2.6. Utilizar UDF en Spark y Spark SQL
 ```sh
-spark-submit /opt/spark/data/user_defined_function.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/user_defined_function.py
 ```
 _Ejecuta ejemplos de funciones definidas por el usuario (UDF) en Spark y Spark SQL. Los resultados se muestran por consola._
 
 ### 2.7. Visualización de datos estadísticos con pandas
 ```sh
-spark-submit /opt/spark/data/pandas_script.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/pandas_script.py
 ```
 _Utiliza pandas para realizar análisis estadísticos y generar visualizaciones. Los gráficos se guardan como archivos PNG en `data/viz/` y los resultados se muestran por consola._
 
 ### 2.8. Análisis de películas (movies.py)
 ```sh
-spark-submit /opt/spark/data/movies.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/movies.py
 ```
 _Analiza datos de películas y calificaciones. Los resultados se muestran por consola._
 
 ### 2.9. Análisis de ventas de tienda de tecnología (tech_sales.py)
 ```sh
-spark-submit /opt/spark/data/tech_sales.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/tech_sales.py
 ```
 _Analiza datos de ventas de una tienda de tecnología. Los resultados se muestran por consola._
 
 ### 2.10. Carga y extracción de información con Spark SQL sobre ventas (load_and_extraction_sql.py)
 ```sh
-spark-submit /opt/spark/data/load_and_extraction_sql.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/load_and_extraction_sql.py
 ```
 _Procesa todos los archivos de ventas en `salesdata/`, limpia y transforma los datos, guarda los resultados en formato Parquet en `salesoutput/` y genera gráficos en la carpeta de trabajo. Los resultados y gráficos se muestran por consola y se guardan como archivos PNG._
 

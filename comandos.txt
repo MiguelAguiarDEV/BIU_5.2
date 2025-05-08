@@ -1,0 +1,39 @@
+# Comandos para la Práctica 5.2: Análisis de Ventas y Consultas con Spark, MySQL y Hadoop
+
+# Repositorio: https://github.com/MiguelAguiarDEV/BIU_5.2
+
+# --- Setup de Docker ---
+docker rm -f spark-master-custom hadoop-namenode mysql-moviebind || true
+docker network rm spark-network || true
+docker network create spark-network
+docker build -t spark-custom:3.3.2 ./spark-docker
+docker build -t hadoop-custom:3.3.2 ./hadoop-docker
+docker build -t my-mysql ./mysql-docker
+docker run -d --name mysql-moviebind --network spark-network -p 3306:3306 my-mysql
+docker run -d --name spark-master-custom --network spark-network -p 8080:8080 -p 7077:7077 -v "$(pwd)/spark-docker:/opt/spark/data" spark-custom:3.3.2 tail -f /dev/null
+docker run -d --name hadoop-namenode --network spark-network hadoop-custom:3.3.2 tail -f /dev/null
+# (Solo la primera vez) Formatear el NameNode de Hadoop
+docker exec -it hadoop-namenode bash -c "/opt/hadoop/bin/hdfs namenode -format"
+# Iniciar servicios HDFS en Hadoop (ejecutar dentro del contenedor hadoop-namenode)
+# docker exec -it hadoop-namenode bash
+# export HDFS_NAMENODE_USER=root
+# export HDFS_DATANODE_USER=root
+# export HDFS_SECONDARYNAMENODE_USER=root
+# /opt/hadoop/sbin/hadoop-daemon.sh start namenode
+# /opt/hadoop/sbin/hadoop-daemon.sh start datanode
+# /opt/hadoop/sbin/hadoop-daemon.sh start secondarynamenode
+# exit
+# Instalar ping (opcional, para pruebas de red)
+# docker exec -it spark-master-custom bash -c "apt-get update && apt-get install -y iputils-ping"
+
+# --- Ejecución de scripts de Spark ---
+docker exec -it spark-master-custom spark-submit /opt/spark/data/table_data_frame.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/native_queries.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/sql_queries.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/names.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/sales.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/user_defined_function.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/pandas_script.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/movies.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/tech_sales.py
+docker exec -it spark-master-custom spark-submit /opt/spark/data/load_and_extraction_sql.py
